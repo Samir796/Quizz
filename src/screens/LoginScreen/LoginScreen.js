@@ -18,7 +18,7 @@ const Login = ({route, navigation}) => {
   const [isButtonAble, setButtonAble] = useState(false);
   useEffect(() => {
     setButtonAble(psw.length > 0);
-  }, []);
+  }, [psw]);
   function login() {
     auth()
       .signInWithEmailAndPassword(email, psw)
