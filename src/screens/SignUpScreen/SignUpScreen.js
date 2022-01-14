@@ -6,6 +6,7 @@ import {
   StatusBar,
   SafeAreaView,
   Keyboard,
+  Alert,
 } from 'react-native';
 import BgImg from '../../components/BgImage';
 import CustomBtn from '../../components/CustomButton';
@@ -53,23 +54,21 @@ const SignUp = ({navigation}) => {
         onResponderRelease={onRelease}
         onStartShouldSetResponder={shouldSetResponse}>
         <BgImg />
-        <StatusBar hidden={true} />
         <View style={styles.containerAll}>
-          <View style={styles.containerFirst}>
-            <View style={styles.backBtnContainer}>
-              <BackBtn onclick={() => navigation.navigate('Hi')} />
-            </View>
-            <Text style={styles.elementStyle}>Sign Up</Text>
-          </View>
+          <BackBtn
+            onClickBackBtn={() => navigation.navigate('Hi')}
+            textHeader={'Sign Up'}
+          />
           <View style={styles.containerSecond}>
             <View style={styles.blurContainer}>
               <View style={styles.SecondInContainer}></View>
               <CustomInput
-                name="Name "
+                name="Email "
                 type="email-address"
                 value={email}
                 onchangetext={text => setEmail(text)}
               />
+              <CustomInput name="Name " type="default" />
               <View style={styles.inputView}>
                 <CustomInput
                   name="Password"
@@ -81,7 +80,7 @@ const SignUp = ({navigation}) => {
                 <Text
                   style={styles.inputText}
                   onPress={() => setHidePass(!hidePass)}>
-                  {hidePass ? <Text>View</Text> : <Text>Hide</Text>}
+                  {hidePass ? 'View' : 'Hide'}
                 </Text>
               </View>
               <View style={styles.containerTerm}>
@@ -113,10 +112,7 @@ const styles = StyleSheet.create({
   containerAll: {
     flex: 1,
   },
-  containerFirst: {
-    flex: 1,
-    justifyContent: 'space-between',
-  },
+
   containerSecond: {
     flex: 2,
   },
@@ -136,20 +132,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 20,
   },
-  backBtnContainer: {
-    alignItems: 'flex-start',
-  },
   containerTerm: {
     alignItems: 'flex-start',
     width: '90%',
     marginVertical: 20,
-  },
-  elementStyle: {
-    color: '#fff',
-    fontSize: 34,
-    fontWeight: 'bold',
-    paddingHorizontal: 30,
-    paddingBottom: 30,
   },
   textOrStyle: {
     color: '#ffff',
@@ -170,10 +156,9 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     marginHorizontal: 5,
   },
-
   textStyle: {
     color: 'white',
-    fontSize: 17,
+    fontSize: 16,
   },
   inputView: {
     width: '100%',

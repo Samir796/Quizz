@@ -56,16 +56,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  textOne: {
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#8d898a',
-  },
-  textTwo: {
-    lineHeight: 26,
-    color: '#4e9ec3',
-  },
+
   ButtonHide: {
     width: '40%',
     height: 40,
@@ -90,7 +81,7 @@ const styles = StyleSheet.create({
   },
   Privacy: {
     color: '#2DAB87',
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700',
   },
 });

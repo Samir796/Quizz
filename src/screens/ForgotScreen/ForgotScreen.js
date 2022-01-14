@@ -1,30 +1,14 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, Keyboard} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Keyboard} from 'react-native';
 import BackBtn from '../../components/BackBtn';
 import BgImg from '../../components/BgImage';
 import CustomBtn from '../../components/CustomButton';
 import CustomInput from '../../components/CustomTextInput';
-import ForgotPassword from '../../components/Forgot';
-import auth from '@react-native-firebase/auth';
-
-const Login = ({route, navigation}) => {
+const ForgotScreen = ({navigation}) => {
   const shouldSetResponse = () => true;
   const onRelease = () => Keyboard.dismiss();
 
-  const [hidePass, setHidePass] = useState(true);
-  const [psw, setPsw] = useState('');
-  const {email} = route.params;
-
-  function login() {
-    auth()
-      .signInWithEmailAndPassword(email, psw)
-      .then(response => {
-        navigation.navigate('Home');
-      })
-      .catch(error => {
-        alert(error.message);
-      });
-  }
+  const [email, setEmail] = useState('');
 
   return (
     <View
@@ -33,31 +17,19 @@ const Login = ({route, navigation}) => {
       onStartShouldSetResponder={shouldSetResponse}>
       <BgImg />
       <BackBtn
+        textHeader={'Forgot Password'}
         onClickBackBtn={() => navigation.navigate('Hi')}
-        textHeader={'Login'}
       />
       <View style={styles.containerSecond}>
         <View style={styles.blurContainer}>
           <View style={styles.SecondInContainer}></View>
           <CustomInput
-            value={psw}
-            onchangetext={setPsw}
-            name="Password"
-            type="default"
-            secure={hidePass}
+            name="Email"
+            type="email-address"
+            value={email}
+            onchangetext={setEmail}
           />
-          <Text style={styles.inputText} onPress={() => setHidePass(!hidePass)}>
-            {hidePass ? 'View' : 'Hide'}
-          </Text>
-          <CustomBtn
-            isButtonAble={psw.length > 0}
-            click={login}
-            text="Continue"
-          />
-          <ForgotPassword
-            onClickForgotBtn={() => navigation.navigate('Forgot')}
-            text="Forgot your password?"
-          />
+          <CustomBtn text="Continue" isButtonAble={email.length > 0} />
         </View>
       </View>
     </View>
@@ -70,6 +42,19 @@ const styles = StyleSheet.create({
   containerSecond: {
     flex: 2,
   },
+  blurContainer: {
+    marginHorizontal: 5,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  elementStyle: {
+    color: '#fff',
+    fontSize: 34,
+    fontWeight: 'bold',
+    paddingHorizontal: 30,
+    paddingBottom: 30,
+  },
   SecondInContainer: {
     position: 'absolute',
     opacity: 0.8,
@@ -79,12 +64,6 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0,
-  },
-  blurContainer: {
-    marginHorizontal: 5,
-    backgroundColor: 'transparent',
-    alignItems: 'center',
-    paddingVertical: 20,
   },
   textOrStyle: {
     color: '#ffff',
@@ -105,12 +84,5 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     marginHorizontal: 5,
   },
-  inputText: {
-    color: '#000',
-    position: 'absolute',
-    top: 46,
-    right: 40,
-    fontSize: 17,
-  },
 });
-export default Login;
+export default ForgotScreen;

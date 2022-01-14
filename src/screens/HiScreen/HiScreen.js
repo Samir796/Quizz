@@ -7,33 +7,24 @@ import {
   StatusBar,
   Keyboard,
 } from 'react-native';
-import {useEffect} from 'react/cjs/react.development';
-import BackBtn from '../../components/BackBtn';
 import BgImg from '../../components/BgImage';
 import CustomBtn from '../../components/CustomButton';
 import CustomInput from '../../components/CustomTextInput';
 import ForgotPassword from '../../components/Forgot';
+
 const Hi = ({navigation}) => {
   const shouldSetResponse = () => true;
   const onRelease = () => Keyboard.dismiss();
 
   const [email, setEmail] = useState('');
-  const [isButtonAble, setButtonAble] = useState(false);
 
-  useEffect(() => {
-    setButtonAble(email.length > 0);
-  }, [email]);
   return (
     <View
       style={styles.containerAll}
       onResponderRelease={onRelease}
       onStartShouldSetResponder={shouldSetResponse}>
       <BgImg />
-      <StatusBar hidden={true} />
       <View style={styles.containerFirst}>
-        <View style={styles.backBtnContainer}>
-          <BackBtn />
-        </View>
         <Text style={styles.elementStyle}>Hi</Text>
       </View>
       <View style={styles.containerSecond}>
@@ -46,9 +37,9 @@ const Hi = ({navigation}) => {
             type="email-address"
           />
           <CustomBtn
-            isButtonAble={isButtonAble}
+            isButtonAble={email.length > 0}
             text="Continue"
-            click={() => navigation.navigate('Login', {email: email})}
+            click={() => navigation.navigate('Login', {email})}
           />
           <Text style={styles.textOrStyle}>or</Text>
           <View style={styles.SignUpContainer}>
@@ -57,9 +48,10 @@ const Hi = ({navigation}) => {
               <Text style={styles.textSignUp}>Sign Up</Text>
             </TouchableOpacity>
           </View>
-          <View style={styles.forgotContainer}>
-            <ForgotPassword text="Forgot your password?" />
-          </View>
+          <ForgotPassword
+            onClickForgotBtn={() => navigation.navigate('Forgot')}
+            text="Forgot your password?"
+          />
         </View>
       </View>
     </View>
@@ -71,23 +63,16 @@ const styles = StyleSheet.create({
   },
   containerFirst: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
   containerSecond: {
     flex: 2,
-  },
-  forgotContainer: {
-    alignSelf: 'flex-start',
-    marginHorizontal: 20,
   },
   blurContainer: {
     marginHorizontal: 5,
     backgroundColor: 'transparent',
     alignItems: 'center',
     paddingVertical: 20,
-  },
-  backBtnContainer: {
-    alignItems: 'flex-start',
   },
   elementStyle: {
     color: '#fff',

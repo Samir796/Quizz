@@ -1,17 +1,21 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
-const ForgotPassword = ({text}) => {
+const ForgotPassword = ({text, onClickForgotBtn}) => {
   return (
-    <>
-      <TouchableOpacity style={styles.touchStyle}>
+    <View style={styles.forgotContainer}>
+      <TouchableOpacity style={styles.touchStyle} onPress={onClickForgotBtn}>
         <Text style={styles.text}>{text}</Text>
       </TouchableOpacity>
-    </>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  forgotContainer: {
+    alignSelf: 'flex-start',
+    marginHorizontal: 20,
+  },
   touchStyle: {
     marginVertical: 10,
   },
