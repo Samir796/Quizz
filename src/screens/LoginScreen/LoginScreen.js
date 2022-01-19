@@ -7,24 +7,44 @@ import CustomInput from '../../components/CustomTextInput';
 import ForgotPassword from '../../components/Forgot';
 import auth from '@react-native-firebase/auth';
 
+const updateError = (error, stateUpdater) => {
+  stateUpdater(error);
+  setTimeout(() => {
+    stateUpdater('');
+  }, 2500);
+};
+
 const Login = ({route, navigation}) => {
   const shouldSetResponse = () => true;
   const onRelease = () => Keyboard.dismiss();
 
   const [hidePass, setHidePass] = useState(true);
-  const [psw, setPsw] = useState('');
   const {email} = route.params;
 
-  function login() {
-    auth()
-      .signInWithEmailAndPassword(email, psw)
-      .then(response => {
-        navigation.navigate('Home');
-      })
-      .catch(error => {
-        alert(error.message);
-      });
-  }
+  const [userInfo, setUserInfo] = useState({
+    psw: '',
+  });
+
+  const [error, setError] = useState('');
+  const {psw} = userInfo;
+  const handleOnChangeText = (value, fieldName) => {
+    setUserInfo({...userInfo, [fieldName]: value});
+  };
+
+  const isValidForm = () => {
+    if (psw.length < 8) {
+      return updateError('password incorrect', setError);
+    } else {
+      auth()
+        .signInWithEmailAndPassword(email, psw)
+        .then(response => {
+          navigation.navigate('Home');
+        })
+        .catch(error => {
+          alert(error.message);
+        });
+    }
+  };
 
   return (
     <View
@@ -39,19 +59,24 @@ const Login = ({route, navigation}) => {
       <View style={styles.containerSecond}>
         <View style={styles.blurContainer}>
           <View style={styles.SecondInContainer}></View>
-          <CustomInput
-            value={psw}
-            onchangetext={setPsw}
-            name="Password"
-            type="default"
-            secure={hidePass}
-          />
-          <Text style={styles.inputText} onPress={() => setHidePass(!hidePass)}>
-            {hidePass ? 'View' : 'Hide'}
-          </Text>
+          {error ? <Text style={styles.ErrorText}>{error}</Text> : null}
+          <View style={styles.inputView}>
+            <CustomInput
+              value={psw}
+              onchangetext={value => handleOnChangeText(value, 'psw')}
+              name="Password"
+              type="default"
+              secure={hidePass}
+            />
+            <Text
+              style={styles.inputText}
+              onPress={() => setHidePass(!hidePass)}>
+              {hidePass ? 'View' : 'Hide'}
+            </Text>
+          </View>
           <CustomBtn
             isButtonAble={psw.length > 0}
-            click={login}
+            click={() => isValidForm()}
             text="Continue"
           />
           <ForgotPassword
@@ -64,6 +89,15 @@ const Login = ({route, navigation}) => {
   );
 };
 const styles = StyleSheet.create({
+  inputView: {
+    width: '100%',
+    alignItems: 'center',
+  },
+  ErrorText: {
+    color: 'red',
+    fontSize: 18,
+    alignItems: 'center',
+  },
   containerAll: {
     flex: 1,
   },
@@ -108,7 +142,7 @@ const styles = StyleSheet.create({
   inputText: {
     color: '#000',
     position: 'absolute',
-    top: 46,
+    top: 28,
     right: 40,
     fontSize: 17,
   },

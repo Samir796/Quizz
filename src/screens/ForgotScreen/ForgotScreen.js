@@ -4,6 +4,7 @@ import BackBtn from '../../components/BackBtn';
 import BgImg from '../../components/BgImage';
 import CustomBtn from '../../components/CustomButton';
 import CustomInput from '../../components/CustomTextInput';
+
 const ForgotScreen = ({navigation}) => {
   const shouldSetResponse = () => true;
   const onRelease = () => Keyboard.dismiss();

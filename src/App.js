@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, StatusBar} from 'react-native';
-import Root from './navigation/root/Root';
+import Root from './navigation/Root';
 
 const App = () => {
   return (

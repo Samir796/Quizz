@@ -12,11 +12,37 @@ import CustomBtn from '../../components/CustomButton';
 import CustomInput from '../../components/CustomTextInput';
 import ForgotPassword from '../../components/Forgot';
 
+const updateError = (error, stateUpdater) => {
+  stateUpdater(error);
+  setTimeout(() => {
+    stateUpdater('');
+  }, 2500);
+};
+
+const isValidEmail = value => {
+  const regx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+  return regx.test(value);
+};
+
 const Hi = ({navigation}) => {
   const shouldSetResponse = () => true;
   const onRelease = () => Keyboard.dismiss();
+  const [userInfo, setUserInfo] = useState({
+    email: '',
+  });
+  const [error, setError] = useState('');
+  const {email} = userInfo;
+  const handleOnChangeText = (value, fieldName) => {
+    setUserInfo({...userInfo, [fieldName]: value});
+  };
 
-  const [email, setEmail] = useState('');
+  function isValidForm() {
+    if (!isValidEmail(email)) {
+      updateError('email incorrect', setError);
+    } else {
+      navigation.navigate('Login', {email});
+    }
+  }
 
   return (
     <View
@@ -30,16 +56,17 @@ const Hi = ({navigation}) => {
       <View style={styles.containerSecond}>
         <View style={styles.blurContainer}>
           <View style={styles.SecondInContainer}></View>
+          {error ? <Text style={styles.ErrorText}>{error}</Text> : null}
           <CustomInput
             value={email}
-            onchangetext={setEmail}
+            onchangetext={value => handleOnChangeText(value, 'email')}
             name="Email"
             type="email-address"
           />
           <CustomBtn
             isButtonAble={email.length > 0}
             text="Continue"
-            click={() => navigation.navigate('Login', {email})}
+            click={() => isValidForm()}
           />
           <Text style={styles.textOrStyle}>or</Text>
           <View style={styles.SignUpContainer}>
@@ -58,6 +85,11 @@ const Hi = ({navigation}) => {
   );
 };
 const styles = StyleSheet.create({
+  ErrorText: {
+    color: 'red',
+    fontSize: 18,
+    alignItems: 'center',
+  },
   containerAll: {
     flex: 1,
   },

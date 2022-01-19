@@ -14,15 +14,32 @@ import CustomInput from '../../components/CustomTextInput';
 import auth from '@react-native-firebase/auth';
 import BackBtn from '../../components/BackBtn';
 import ModalTester from '../../components/Modal';
+import firestore from '@react-native-firebase/firestore';
+
+const updateError = (error, stateUpdater) => {
+  stateUpdater(error);
+  setTimeout(() => {
+    stateUpdater('');
+  }, 2500);
+};
+
+const isValidEmail = value => {
+  const regx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
+  return regx.test(value);
+};
 
 const SignUp = ({navigation}) => {
   const shouldSetResponse = () => true;
   const onRelease = () => Keyboard.dismiss();
 
+  const [error, setError] = useState('');
   const [hidePass, setHidePass] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const [isButtonAble, setButtonAble] = useState(false);
+
+  const ref = firestore().collection('User');
 
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(user => {
@@ -32,14 +49,31 @@ const SignUp = ({navigation}) => {
     });
     return unsubscribe;
   }, []);
-  const handleSignUp = () => {
-    auth()
-      .createUserWithEmailAndPassword(email, password)
-      .then(userCredentials => {
-        const user = userCredentials.user;
-        console.log(user.email);
-      })
-      .catch(error => alert(error.message));
+
+  const isValidForm = () => {
+    if (!isValidEmail(email) & (password.length < 6) & (name.length === 0)) {
+      return updateError(
+        'email & password incorrect, name is required',
+        setError,
+      );
+    } else if (!isValidEmail(email)) {
+      updateError('email incorrect', setError);
+    } else if (name.length === 0) {
+      updateError('name is required', setError);
+    } else if (password.length < 6) {
+      updateError('password incorrect', setError);
+    } else {
+      auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(userCredentials => {
+          return ref.doc(userCredentials.user.uid).set({
+            Name: name,
+          });
+          // const user = userCredentials.user;
+          // console.log(user.email);
+        })
+        .catch(error => alert(error.message));
+    }
   };
 
   useEffect(() => {
@@ -62,19 +96,25 @@ const SignUp = ({navigation}) => {
           <View style={styles.containerSecond}>
             <View style={styles.blurContainer}>
               <View style={styles.SecondInContainer}></View>
+              {error ? <Text style={styles.ErrorText}>{error}</Text> : null}
               <CustomInput
                 name="Email "
                 type="email-address"
                 value={email}
-                onchangetext={text => setEmail(text)}
+                onchangetext={setEmail}
               />
-              <CustomInput name="Name " type="default" />
+              <CustomInput
+                name="Name "
+                type="default"
+                value={name}
+                onchangetext={setName}
+              />
               <View style={styles.inputView}>
                 <CustomInput
                   name="Password"
                   type="default"
                   value={password}
-                  onchangetext={text => setPassword(text)}
+                  onchangetext={setPassword}
                   secure={hidePass}
                 />
                 <Text
@@ -95,7 +135,7 @@ const SignUp = ({navigation}) => {
               <CustomBtn
                 isButtonAble={isButtonAble}
                 text="Agree and continue"
-                click={handleSignUp}
+                click={isValidForm}
               />
             </View>
           </View>
@@ -105,6 +145,11 @@ const SignUp = ({navigation}) => {
   );
 };
 const styles = StyleSheet.create({
+  ErrorText: {
+    color: 'red',
+    fontSize: 18,
+    alignItems: 'center',
+  },
   safeContainer: {
     flex: 0,
     backgroundColor: 'white',
